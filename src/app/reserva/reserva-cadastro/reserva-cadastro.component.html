@@ -1,0 +1,162 @@
+<div class="container">
+
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <h1>{{ editando ? 'Edição' : 'Cadastro'}} de reserva</h1>
+    </div>
+  </div>
+
+  <form #formCliente="ngForm" (ngSubmit)="buscarCliete(formCliente)" *ngIf="exibirMenu == false"
+    [hidden]="editando">
+    <div class="ui-g">
+
+      <div class="ui-g-3 ui-fluid">
+        <label for="rgCliente">RG</label>
+        <p-inputMask mask="9.999.999" name="rgCliente" [(ngModel)]="rg"></p-inputMask>
+      </div>
+
+      <div class="ui-g-2 botao-espaco">
+        <button type="submit" pButton label="Pesquisar" [disabled]="rg.length < 9"></button>
+      </div>
+    </div>
+  </form>
+
+  <form *ngIf="exibirMenu == true" #formLivro="ngForm" (ngSubmit)="buscarLivros(formLivro)">
+
+    <div class="ui-g">
+
+      <div class="ui-g-3 ui-fluid">
+        <label for="nomeLivro">Nome do livro</label>
+        <input type="text" name="nomeLivro" [(ngModel)]="nomeLivro" pInputText />
+      </div>
+
+      <div class="ui-g-2 botao-espaco">
+        <button type="submit" pButton label="Pesquisar"></button>
+      </div>
+    </div>
+  </form>
+
+  <form #formPrincipal="ngForm" (ngSubmit)="confirmaAcao(formPrincipal)">
+    <div class="ui-g">
+
+      <div class="ui-g-12">
+
+        <p-fieldset legend="Formúlario de aluguel">
+
+          <p-fieldset legend="Dados do cliente">
+
+            <div class="ui-g-5 ui-fluid">
+              <label for="nomeCliente">Nome</label>
+              <input type="text" name="nomeCliente" pInputText disabled="true"
+                required  [(ngModel)]="reserva.cliente.nome"/>
+            </div>
+
+            <div class="ui-g-4 ui-fluid">
+              <label for="dataCliente">Data de nascimento</label>
+              <p-calendar dateFormat="dd/mm/yy" [showIcon]="true" name="dataCliente"
+                disabled="true" required [(ngModel)]="reserva.cliente.dataNascimento"></p-calendar>
+            </div>
+
+            <div class="ui-g-3 ui-fluid">
+              <label for="rg">RG</label>
+              <p-inputMask mask="99.999.999" disabled="true" name="rg" required
+                [(ngModel)]="reserva.cliente.rg"></p-inputMask>
+            </div>
+
+            <div class="ui-g-5 ui-fluid">
+              <label for="logradouro">Logradouro</label>
+              <input type="text" name="logradouro" pInputText disabled="true" required
+                [(ngModel)]="reserva.cliente.endereco.logradouro"/>
+            </div>
+
+            <div class="ui-g-4 ui-fluid">
+              <label for="bairro">Bairro</label>
+              <input type="text" name="bairro" pInputText disabled="true" required
+                [(ngModel)]="reserva.cliente.endereco.bairro"/>
+            </div>
+
+            <div class="ui-g-3 ui-fluid">
+              <label for="cidade">Cidade</label>
+              <input type="text" name="cidade" pInputText disabled="true" required
+                [(ngModel)]="reserva.cliente.endereco.cidade"/>
+            </div>
+
+          </p-fieldset>
+
+          <p-fieldset legend="Dados do livro">
+
+            <div class="ui-g-4 ui-fluid">
+              <label for="nomeLivro">Nome</label>
+              <input type="text" name="nomeLivro" pInputText disabled="true"
+                [(ngModel)]="reserva.livro.nome" />
+            </div>
+
+            <div class="ui-g-4 ui-fluid">
+              <label for="autor">Autor</label>
+              <input type="text" name="autor" pInputText disabled="true" [(ngModel)]="reserva.livro.autor" />
+            </div>
+
+            <div class="ui-g-4 ui-fluid">
+              <label for="genero">Gênero</label>
+              <input type="text" name="genero" pInputText disabled="true" [(ngModel)]="reserva.livro.genero" />
+            </div>
+
+          </p-fieldset>
+
+          <div class="ui-g-3 ui-fluid">
+            <label for="dataReserva">Data de busca</label>
+            <p-calendar dateFormat="dd/mm/yy" name="dataInicio" #data="ngModel" [(ngModel)]="reserva.dataReserva"
+               [showIcon]="true" [minDate]="dataAtual" required></p-calendar>
+
+            <app-message [control]="data" error="required" texto="Preencha o campo"></app-message>
+          </div>
+
+          <div class="ui-g-6">
+            <button class="botao-espaco" type="submit" pButton label="Salvar" [disabled]="formPrincipal.invalid">
+            </button>
+            <button class="ui-button-warning" type="button" pButton label="cancelar"
+              (click)="confirmaCancelamento(formPrincipal)" [disabled]="formPrincipal.invalid && formPrincipal.untouched">
+            </button>
+          </div>
+
+        </p-fieldset>
+
+      </div>
+
+    </div>
+  </form>
+
+  <p-dialog styleClass="container" header="Livros encontrados" [(visible)]="exibirPainel">
+
+    <p-table [value]="livros" [paginator]="true" [rows]="3" [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nome</th>
+          <th>Autor</th>
+          <th>Gênero</th>
+          <th class="col-botoes"></th>
+        </tr>
+      </ng-template>
+        <ng-template pTemplate="body" let-livro>
+          <tr>
+            <td>{{livro.nome}}</td>
+            <td>{{livro.autor}}</td>
+            <td>{{livro.genero}}</td>
+            <td>
+             <button type="button" pButton icon="pi pi-check" (click)="adicionarLivro(livro)"></button>
+            </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [colSpan]="4">Nenhum livro encontrado</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+
+
+</div>
+
+<p-toast position="top-right"></p-toast>
+

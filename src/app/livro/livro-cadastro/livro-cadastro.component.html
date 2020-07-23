@@ -1,0 +1,69 @@
+<div class="container">
+
+  <div>
+    <h1>{{temLivroId ? 'Edição' : 'Cadastro' }} de livro</h1>
+  </div>
+
+ <form #form="ngForm" (ngSubmit)="confirmacao(form)">
+  <div class="ui-g">
+
+    <div class="ui-g-12 ui-fluid">
+      <label for="nome">Nome do livro</label>
+      <input type="text" name="nome" [(ngModel)]="livro.nome" #nome="ngModel" pInputText
+         required minlength="6" maxlength="70" />
+
+      <app-message [control]="nome" error="required" texto="Preencha o campo"></app-message>
+      <app-message [control]="nome" error="minlength"
+        texto="Deve ter no mínimo {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+    </div>
+
+    <div class="ui-g-12 ui-fluid">
+      <label for="autor">Autor do livro</label>
+      <input type="text" name="autor" [(ngModel)]="livro.autor" #autor="ngModel" pInputText
+        required minlength="6" maxlength="70" />
+
+      <app-message [control]="autor" error="required" texto="Preencha o campo"></app-message>
+      <app-message [control]="autor" error="minlength"
+        texto="Deve ter no mínimo {{autor.errors?.minlength?.requiredLength}} caracteres"></app-message>
+    </div>
+
+    <div class="ui-g-3 ui-sm-3 ui-fluid">
+      <label for="genero">Gênero</label>
+      <input type="text" name="genero" [(ngModel)]="livro.genero" #genero="ngModel" pInputText required />
+
+      <app-message [control]="genero" error="required"
+        texto="Preencha o campo"></app-message>
+    </div>
+
+    <div class="ui-g-3 ui-sm-5 ui-fluid">
+      <label for="data">Data de Lançamento</label>
+      <p-calendar name="data" dateFormat="dd/mm/yy" [showIcon]="true" [(ngModel)]="livro.dataLancamento"
+         #data="ngModel" required></p-calendar>
+
+      <app-message [control]="data" error="required" texto="Preencha o campo"></app-message>
+    </div>
+
+    <div class="ui-g-3 ui-sm-3 ui-fluid">
+      <label for="quantidade">Quantidade</label>
+      <input type="number" name="quantidade" [(ngModel)]="livro.quantidade" #quantidade="ngModel" pInputText
+        required minlength="1" />
+
+      <app-message [control]="quantidade" error="required"
+        texto="Preencha o campo"></app-message>
+      <app-message [control]="quantidade" error="minlength"
+        texto="Deve ter no mínimo {{quantidade.errors?.minlength?.requiredLength}}"></app-message>
+    </div>
+
+    <div class="ui-g-12">
+      <button class="botao-espaco" type="submit" pButton label="Salvar" [disabled]="form.invalid"></button>
+      <button class="ui-button-warning botao-espaco" type="button" pButton label="Cancelar"
+        [disabled]="form.untouched" (click)="confirmaCancelamento(form)"></button>
+      <a href="javascript:;" [routerLink]="['/livros/lista']">Voltar para lista de livros</a>
+    </div>
+
+  </div>
+ </form>
+
+</div>
+
+<p-toast position="top-right"></p-toast>
